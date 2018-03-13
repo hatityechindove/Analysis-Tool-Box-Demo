@@ -1,0 +1,39 @@
+service: app-route-access
+provider:
+  name: aws
+  runtime: python2.
+  timeout: ${file(./serverless.env.yml):${opt:stage}.TIME_OUT}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+      - "logs:CreateLogGroup"
+      Resource: "arn:aws:logs:*:*:*"
+    - Effect: Allow
+      Action:
+      - "logs:CreateLogStream"
+      Resource: "arn:aws:logs:*:*:*"
+    - Effect: Allow
+      Action:
+      - "logs:PutLogEvents"
+      Resource: "arn:aws:logs:*:*:*"
+    - Effect: Allow
+      Action:
+      - "sqs:SendMessage"
+      Resource: "arn:aws:sqs:${file(./serverless.env.yml):${opt:stage}.REGION}:${file(./serverless.env.yml):${opt:stage}.ACCOUNT_ID}:${file(./serverless.env.yml):${opt:stage}.ANALYTICS_QUEUE_NAME}"
+    - Effect: Allow
+      Action:
+      - "sqs:SendMessage"
+      Resource: "arn:aws:sqs:${file(./serverless.env.yml):${opt:stage}.REGION}:${file(./serverless.env.yml):${opt:stage}.ACCOUNT_ID}:${file(./serverless.env.yml):${opt:stage}.DATA_LAKE_SERIES_QUEUE}"
+  environment:
+    REGION: ${opt:region}
+    ANALYTICS_QUEUE_NAME: https://sqs.${opt:region}.amazonaws.com/${file(./serverless.env.yml):${opt:stage}.ACCOUNT_ID}/${file(./serverless.env.yml):${opt:stage}.ANALYTICS_QUEUE_NAME}
+    DATA_LAKE_SERIES_QUEUE: https://sqs.${opt:region}.amazonaws.com/${file(./serverless.env.yml):${opt:stage}.ACCOUNT_ID}/${file(./serverless.env.yml):${opt:stage}.DATA_LAKE_SERIES_QUEUE}
+functions:
+  SampleAppRouteAccess:
+    handler: handler.create
+    description: Applications route logs ${file(./serverless.env.yml):${opt:stage}.ENVIRONMENT} environment
+    name: application_log_${file(./serverless.env.yml):${opt:stage}.ENVIRONMENT}
+    events:
+     # - sns: arn:aws:sns:us-east-1:659153740712:intellection_cloud_trail_events
+    tags:
+      Role: Security

@@ -18,7 +18,7 @@ def create(event, context):
             DelaySeconds=10,
             MessageAttributes = {
                 'Identifier': {
-                    'StringValue': 'ELBLOGS',
+                    'StringValue': 'APPROUTELOGS',
                     'DataType': 'String'
                 }},
             MessageBody=str(event['message']) + "\n"
@@ -29,7 +29,7 @@ def create(event, context):
             DelaySeconds=10,
             MessageAttributes = {
                 'Identifier': {
-                    'StringValue': 'ELBLOGS',
+                    'StringValue': 'APPROUTELOGS',
                     'DataType': 'String'
                 }},
             MessageBody=str(event['message']) + "\n"

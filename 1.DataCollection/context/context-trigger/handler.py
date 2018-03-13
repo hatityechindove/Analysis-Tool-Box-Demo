@@ -9,4 +9,5 @@ from StringIO import StringIO
 def source_lists(event, context):
     ec2 = boto3.client('ec2')
     response_instance = ec2.describe_instances()
+    value['Reservations'][0]['Instances']
     print(response_instance)
