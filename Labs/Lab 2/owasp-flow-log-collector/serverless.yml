@@ -1,0 +1,31 @@
+service: owasp-flow-log-collector
+provider:
+  name: aws
+  runtime: python2.7
+  timeout: ${file(./serverless.env.yml):${opt:stage}.TIME_OUT}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+      - "logs:CreateLogGroup"
+      Resource: "arn:aws:logs:*:*:*"
+    - Effect: Allow
+      Action:
+      - "logs:CreateLogStream"
+      Resource: "arn:aws:logs:*:*:*"
+    - Effect: Allow
+      Action:
+      - "logs:PutLogEvents"
+      Resource: "arn:aws:logs:*:*:*"
+    - Effect: Allow
+      Action:
+      - "sns:*"
+      Resource: ${file(./serverless.env.yml):${opt:stage}.TargetSNS}
+  environment:
+    TargetSNS: ${file(./serverless.env.yml):${opt:stage}.TargetSNS}
+functions:
+  owasp_flow_logs_demo:
+    handler: handler.lambda_handler
+    events:
+      - cloudwatchLog: '${file(./serverless.env.yml):${opt:stage}.CloudwatchLog1}'
+    description: Account VPC flow logs processing demo
+    name: owasp_flow_logs_lab_2_demo

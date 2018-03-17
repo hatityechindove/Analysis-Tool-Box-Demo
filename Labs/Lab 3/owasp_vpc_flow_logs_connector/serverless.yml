@@ -1,0 +1,37 @@
+service: owasp-vpc-flow-logs-connector
+
+provider:
+  name: aws
+  runtime: python2.7
+  timeout: ${file(./serverless.env.yml):${opt:stage}.TIME_OUT}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+      - "logs:CreateLogGroup"
+      Resource: "arn:aws:logs:*:*:*"
+
+    - Effect: Allow
+      Action:
+      - "logs:CreateLogStream"
+      Resource: "arn:aws:logs:*:*:*"
+
+    - Effect: Allow
+      Action:
+      - "logs:PutLogEvents"
+      Resource: "arn:aws:logs:*:*:*"
+
+    - Effect: Allow
+      Action:
+      - "firehose:PutRecordBatch"
+      Resource: "${file(./serverless.env.yml):${opt:stage}.DELIVERY_STREAM_ARN}"
+  environment:
+    DELIVERY_STREAM_NAME: ${file(./serverless.env.yml):${opt:stage}.DELIVERY_STREAM_NAME}
+functions:
+  SecurityServiceslg:
+    handler: owasp_vpc_flow_logs_connector.create
+    description: Logs VPC flow logs for VPC flow logs
+    name: owasp_vpc_flow_logs_connector_${file(./serverless.env.yml):${opt:stage}.ENVIRONMENT}
+    events:
+      - sns: ${file(./serverless.env.yml):${opt:stage}.FLOW_LOG_NOTIFICATION}
+    tags:
+      Role: Security

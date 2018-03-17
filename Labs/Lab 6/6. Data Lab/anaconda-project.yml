@@ -1,0 +1,14 @@
+---
+name: OWASP 
+env_specs:
+  default:
+    description: Run specs for data lab project
+    packages:
+    - anaconda
+    channels: []
+    platforms:
+    - linux-64
+    - osx-64
+    - win-64
+    variables:
+    commands:
