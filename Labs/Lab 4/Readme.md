@@ -1,8 +1,15 @@
-# Overview of conducting analysis for injested data
+# Overview of conducting analysis for ingested data
 1. Create project for analysis
 - Setup data, doc, R, Python and reports directories
 2. Query data on Athena for Series Netflow logs
-- Unique IP's that have traffic hit our VPC
+-  IP's that have traffic hit our VPC
+- Other:
+a. https://prestodb.io/docs/0.172/functions/lambda.html
+b. https://prestodb.io/docs/0.172/functions/comparison.html
+c. https://prestodb.io/docs/0.172/functions/datetime.html
+d. https://docs.aws.amazon.com/athena/latest/ug/vpc-flow-logs.html
+
+```
 3. Gather reputation dataset for IP's in dataset through
 - Access Alien vault reputation dataset and store them
 - Gather IP address from the reputation dataset
@@ -29,3 +36,5 @@ or
 packages:
 https://pypi.python.org/pypi/PyAthenaJDBC/
 - pip install PyAthenaJDBC
+
+SELECT current_date as query_time ,interfaceid, sourceaddress, destinationaddress, sourceport, destinationport, protocol, date(from_unixtime(starttime))as start_time, action FROM "data_lake_store"."kubernetes_vpc_flow_logs" WHERE action="ACCEPT" LIMIT 1000000;

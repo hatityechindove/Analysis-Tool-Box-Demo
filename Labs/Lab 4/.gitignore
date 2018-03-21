@@ -1,3 +1,6 @@
 data/*.*
 .ipynb*
 data/*
+R/data/*
+R/*.png
+R/*.tex
